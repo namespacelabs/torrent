@@ -523,7 +523,6 @@ func (t *Torrent) setInfo(info *metainfo.Info) error {
 	t._chunksPerRegularPiece = chunkIndexType(
 		(pp.Integer(t.usualPieceSize()) + t.chunkSize - 1) / t.chunkSize)
 	t.updateComplete()
-	t.displayName = "" // Save a few bytes lol.
 	t.initFiles()
 	t.cacheLength()
 	t.makePieces()
@@ -673,11 +672,11 @@ func (t *Torrent) setMetadataSize(size int) (err error) {
 func (t *Torrent) name() string {
 	t.nameMu.RLock()
 	defer t.nameMu.RUnlock()
-	if t.haveInfo() {
-		return t.info.BestName()
-	}
 	if t.displayName != "" {
 		return t.displayName
+	}
+	if t.haveInfo() {
+		return t.info.BestName()
 	}
 	return "infohash:" + t.canonicalShortInfohash().HexString()
 }
